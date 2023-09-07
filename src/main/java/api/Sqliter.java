@@ -177,9 +177,9 @@ public class Sqliter {
                 preparedStatement.setString(1, user.getUsername());
                 preparedStatement.setString(2, user.getPassword_MD5());
                 preparedStatement.setInt(3, user.getUUID());
-                boolean execute = preparedStatement.execute();
+                int i = preparedStatement.executeUpdate();
                 c.commit();
-                return execute;
+                return i > 0;
             }
             return true;
         } catch (SQLException e) {
@@ -194,9 +194,9 @@ public class Sqliter {
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1, song.getSongID());
             preparedStatement.setInt(2, songList.getListID());
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -211,9 +211,9 @@ public class Sqliter {
             preparedStatement.setString(2, songList.getDes());
             preparedStatement.setInt(3, songList.getUUID());
             preparedStatement.setString(4, songList.getIcon().toString());
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -226,9 +226,9 @@ public class Sqliter {
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1, songList.getListID());
             preparedStatement.setInt(2, songID);
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -241,9 +241,9 @@ public class Sqliter {
             String sql = "DELETE FROM songlist WHERE listID=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1, songList.getListID());
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -259,9 +259,9 @@ public class Sqliter {
             preparedStatement.setString(3, song.getFile().toString());
             preparedStatement.setString(4, song.getSinger());
             preparedStatement.setString(5, song.getAlbum());
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -274,9 +274,9 @@ public class Sqliter {
             String sql = "DELETE FROM song WHERE songID=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1, song.getSongID());
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -288,9 +288,9 @@ public class Sqliter {
             String sql = "DELETE FROM mark WHERE songID=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1, songID);
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -302,9 +302,9 @@ public class Sqliter {
             String sql = "DELETE FROM mark WHERE listID=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1,SongListID);
-            boolean execute = preparedStatement.execute();
+            int i = preparedStatement.executeUpdate();
             c.commit();
-            return execute;
+            return i > 0;
         }catch (SQLException e){
             e.printStackTrace();
             return false;

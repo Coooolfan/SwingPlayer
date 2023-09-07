@@ -22,12 +22,12 @@ public class SongList {
         this.icon = icon;
         this.listID = listID;
     }
-    public SongList(String name, String des, Path icon, int listID) {
+
+    public SongList(String name, String des, int UUID, Path icon) {
         this.name = name;
         this.des = des;
-        this.UUID = -1;
+        this.UUID = UUID;
         this.icon = icon;
-        this.listID = listID;
     }
 
     public boolean add(Song song){

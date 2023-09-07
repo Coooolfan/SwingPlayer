@@ -236,8 +236,8 @@ public class SettingPanel extends JPanel {
                         SongList songList = new SongList(
                                 songlistTnameText.getText(),
                                 describeText.getText(),
-                                Paths.get(iconText.getText()),
-                                user.getUUID()
+                                user.getUUID(),
+                                Paths.get(iconText.getText())
                         );
                         boolean save = songList.save();
                          if(save){
