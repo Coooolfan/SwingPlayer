@@ -35,13 +35,14 @@ public class MainFrame {
 
         /*音乐库和设置*/
         jTabbedPane.addTab("音乐库",new JSongList(this,SongList.getLibrary(),user));
-        jTabbedPane.addTab("设置",new SettingPanel(user));
+        jTabbedPane.addTab("设置",new SettingPanel(user,this.frame));
 
         /*单个用户拥有的歌单*/
         ArrayList<SongList> songLists = user.getSongLists();
         for (SongList songList : songLists) {
             jTabbedPane.addTab(songList.getName(), new JSongList(this,songList,user));
         }
+        frame.setResizable(false);
         frame.setLayout(new BorderLayout());
         frame.add(jTabbedPane,BorderLayout.CENTER);
         frame.add(AudioManagerPanel.getUniqueInstance(), BorderLayout.SOUTH);
@@ -52,8 +53,17 @@ public class MainFrame {
         frame.setVisible(true);
 
     }
-    //test
-    public static void main(String[] args) {
-        new MainFrame().run(new User("test","test",3));
+    public  boolean close(){
+        try {
+            frame.dispose();
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
+    //test
+//    public static void main(String[] args) {
+//        new MainFrame().run(new User("test","test",3));
+//    }
 }
