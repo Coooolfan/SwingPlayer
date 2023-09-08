@@ -135,11 +135,21 @@ public class JSongList extends JPanel {
                 addSong.addActionListener(e -> {
                     ArrayList<SongList> songLists = user.getSongLists();
                     String[] options = new String[songLists.size()];
+//                    for (int j = 0; j < songLists.size(); j++)
+//                        options[j] = songLists.get(j).getListID()+" "+songLists.get(j).getName();
+//                    String targetSongList = (String) JOptionPane.showInputDialog(this, "添加到歌单：", "目标歌单选择", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+//                    if(targetSongList == null)return;
+//                    int targetListID = Integer.parseInt(targetSongList.split(" ")[0]);
+//                    SongList.getSongListByListID(targetListID).add(songs.get(finalI2));
+
                     for (int j = 0; j < songLists.size(); j++)
-                        options[j] = songLists.get(j).getListID()+" "+songLists.get(j).getName();
+                        options[j] = songLists.get(j).getName();
                     String targetSongList = (String) JOptionPane.showInputDialog(this, "添加到歌单：", "目标歌单选择", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                     if(targetSongList == null)return;
-                    int targetListID = Integer.parseInt(targetSongList.split(" ")[0]);
+                    int targetListID=-1;
+                    for (int j = 0; j < songLists.size(); j++)
+                        if (targetSongList.equals(songLists.get(j).getName()))
+                             targetListID = songLists.get(j).getListID();
                     SongList.getSongListByListID(targetListID).add(songs.get(finalI2));
                 });
                 //从资源库移除
