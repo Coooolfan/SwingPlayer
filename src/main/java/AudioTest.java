@@ -7,7 +7,7 @@ import java.io.File;
 public class AudioTest {
     public static void main(String[] args) throws StreamPlayerException {
         StreamPlayer streamPlayer = new StreamPlayer();
-        String audioAbsolutePath = "C:/Users/Yang/Music/SwingPlayerLibrary/songFile/凄美地 - 郭顶.flac";
+        String audioAbsolutePath = "E:\\song\\songfile\\窃窃_兰音.wav";
         streamPlayer.open(new File(audioAbsolutePath));
         JFrame frame = new JFrame();
         frame.setSize(300, 300);

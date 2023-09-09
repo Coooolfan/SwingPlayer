@@ -224,8 +224,10 @@ public class Sqliter {
         try {
             String sql = "DELETE FROM mark WHERE songID=? AND listID=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
-            preparedStatement.setInt(1, songList.getListID());
-            preparedStatement.setInt(2, songID);
+//            preparedStatement.setInt(1, songList.getListID());
+//            preparedStatement.setInt(2, songID);
+            preparedStatement.setInt(1, songID );
+            preparedStatement.setInt(2, songList.getListID());
             int i = preparedStatement.executeUpdate();
             c.commit();
             return i > 0;

@@ -112,6 +112,7 @@ public class JSongList extends JPanel {
             gbc.anchor = GridBagConstraints.WEST;
             ImageIcon buttonIcon=reSize(new ImageIcon("src\\main\\resources\\icon\\play.png"),30,30);
             JButton player = new JButton(buttonIcon);
+            player.setToolTipText("播放歌曲");
             buttom.add(player,gbc);
 
 //          向AudioManager中添加歌曲
@@ -135,22 +136,27 @@ public class JSongList extends JPanel {
                 addSong.addActionListener(e -> {
                     ArrayList<SongList> songLists = user.getSongLists();
                     String[] options = new String[songLists.size()];
-//                    for (int j = 0; j < songLists.size(); j++)
-//                        options[j] = songLists.get(j).getListID()+" "+songLists.get(j).getName();
-//                    String targetSongList = (String) JOptionPane.showInputDialog(this, "添加到歌单：", "目标歌单选择", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-//                    if(targetSongList == null)return;
-//                    int targetListID = Integer.parseInt(targetSongList.split(" ")[0]);
-//                    SongList.getSongListByListID(targetListID).add(songs.get(finalI2));
 
                     for (int j = 0; j < songLists.size(); j++)
                         options[j] = songLists.get(j).getName();
-                    String targetSongList = (String) JOptionPane.showInputDialog(this, "添加到歌单：", "目标歌单选择", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                    if(targetSongList == null)return;
+                    String targetSongListName = (String) JOptionPane.showInputDialog(this, "添加到歌单：", "目标歌单选择", JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                    if(targetSongListName == null)return;
                     int targetListID=-1;
                     for (int j = 0; j < songLists.size(); j++)
-                        if (targetSongList.equals(songLists.get(j).getName()))
+                        if (targetSongListName.equals(songLists.get(j).getName()))
                              targetListID = songLists.get(j).getListID();
-                    SongList.getSongListByListID(targetListID).add(songs.get(finalI2));
+
+                    // 判断歌单是否存在这首歌
+                    SongList targetSongList = SongList.getSongListByListID(targetListID);
+                    for (int j = 0; j < targetSongList.getSongs().size(); j++) {
+                        if (targetSongList.getSongs().get(j).getName().equals(songs.get(finalI2).getName())){
+                            JOptionPane.showMessageDialog(this,"歌单中已存在此歌","提示",JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
+                    }
+                    targetSongList.add(songs.get(finalI2));
+
+
                 });
                 //从资源库移除
                 gbc.gridx = 6;
@@ -185,7 +191,10 @@ public class JSongList extends JPanel {
                 moveOutSong.addActionListener(e -> {
                     boolean result = JOptionPane.showConfirmDialog(this,"是否从歌单移除","提示",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                     if(result){
-                        songs.get(finalI1).remove();
+                        //TODO 异常
+//                        songs.get(finalI1).remove();
+                        boolean test = songList.removeSong(songs.get(finalI1).getSongID());
+                        System.out.println(test);
                         rootFrame.repaint(songList);
                     }
                 });

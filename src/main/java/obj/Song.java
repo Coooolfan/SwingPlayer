@@ -39,7 +39,7 @@ public class Song {
     public boolean save(){
 //        检查成员变量是否合法
         //TODO 是否合法检测失败
-        if (this.name.isEmpty() || this.icon.toFile().isFile() || this.file.toFile().isFile() || this.singer.isEmpty()|| this.album.isEmpty())
+        if (this.name.isEmpty() || !this.icon.toFile().isFile() || !this.file.toFile().isFile() || this.singer.isEmpty()|| this.album.isEmpty())
             return false;
         Sqliter sqliter = new Sqliter();
         boolean song = sqliter.createSong(this);

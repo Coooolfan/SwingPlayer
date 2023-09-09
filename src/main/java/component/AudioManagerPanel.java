@@ -27,6 +27,7 @@ public class AudioManagerPanel extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 {
+
                     if (audioManager.isPlaying()){
                         System.out.println("从播放时暂停");
                         audioManager.pause();
@@ -36,6 +37,7 @@ public class AudioManagerPanel extends JPanel{
                             songname.setText("已暂停：" + playingSong.getName());
                         // 换图标
                         Button.setIcon(playIcon);
+                        Button.setToolTipText("播放");
                     }else{
                         audioManager.start();
                         System.out.println("从暂停时播放");
@@ -45,6 +47,7 @@ public class AudioManagerPanel extends JPanel{
                             songname.setText("正在播放：" + playingSong.getName());
                         // 换图标
                         Button.setIcon(pauseIcon);
+                        Button.setToolTipText("暂停");
                     }
                 }
             }

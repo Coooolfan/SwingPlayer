@@ -32,7 +32,7 @@ public class SettingPanel extends JPanel {
         this.setLayout(new BorderLayout());
         title.setFont(new Font("仿宋", Font.BOLD, 30));
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(title,BorderLayout.NORTH);
+
         reUsername.setText(user.getUsername());
         reUsername.setEnabled(false);
         rePassword.setEnabled(false);
@@ -55,15 +55,18 @@ public class SettingPanel extends JPanel {
         box3.add(exitButton);
 
 
-        vbox.add(Box.createVerticalStrut(5));
+        vbox.add(Box.createVerticalStrut(10));
         vbox.add(box1);
-        vbox.add(Box.createVerticalStrut(5));
+        vbox.add(Box.createVerticalStrut(15));
         vbox.add(box2);
-        vbox.add(Box.createVerticalStrut(5));
+        vbox.add(Box.createVerticalStrut(15));
         vbox.add(box3);
-        panel.setPreferredSize(new Dimension(200,300));
+        panel.setPreferredSize(new Dimension(300,300));
+        panel.add(title);
         panel.add(vbox);
-        this.add(panel);
+        this.setLayout(new GridBagLayout());
+//        this.add(title,BorderLayout.NORTH);
+        this.add(panel,new GridBagConstraints());
 
         reUsernameButton.addActionListener(new ActionListener() {
             @Override
@@ -218,7 +221,7 @@ public class SettingPanel extends JPanel {
                 Box box1 = Box.createHorizontalBox();
                 Box box2 = Box.createHorizontalBox();
                 Box box3 = Box.createHorizontalBox();
-                JTextField songlistTnameText = new JTextField();
+                JTextField songListNameText = new JTextField();
                 JTextField describeText = new JTextField();
                 JTextField iconText = new JTextField();
                 JButton choose = new JButton("浏览");
@@ -235,7 +238,7 @@ public class SettingPanel extends JPanel {
                 Box vbox = Box.createVerticalBox();
                 box1.add(new JLabel("歌单名"));
                 box1.add(Box.createHorizontalStrut(10));
-                box1.add(songlistTnameText);
+                box1.add(songListNameText);
                 box2.add(new JLabel("描述"));
                 box2.add(Box.createHorizontalStrut(10));
                 box2.add(describeText);
@@ -246,15 +249,15 @@ public class SettingPanel extends JPanel {
                 submit.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (songlistTnameText.getText().isEmpty()||describeText.getText().isEmpty()||iconText.getText().isEmpty()){
+                        if (songListNameText.getText().isEmpty()||describeText.getText().isEmpty()||iconText.getText().isEmpty()){
                             JOptionPane.showMessageDialog(panel,"信息不得为空","提示",JOptionPane.ERROR_MESSAGE);
                             return;
                         }
                         ArrayList<SongList> existSongList = user.getSongLists();
                         for (int i = 0; i < existSongList.size(); i++) {
-                            if (existSongList.get(i).getName().equals(songlistTnameText.getText())){
+                            if (existSongList.get(i).getName().equals(songListNameText.getText())){
                                 JOptionPane.showMessageDialog(panel,"歌单名不得重复","提示",JOptionPane.ERROR_MESSAGE);
-                                songlistTnameText.setText("");
+                                songListNameText.setText("");
                                 describeText.setText("");
                                 iconText.setText("");
                                 return;
@@ -262,7 +265,7 @@ public class SettingPanel extends JPanel {
                         }
                         /*歌单新建x*/
                         SongList songList = new SongList(
-                                songlistTnameText.getText(),
+                                songListNameText.getText(),
                                 describeText.getText(),
                                 user.getUUID(),
                                 Paths.get(iconText.getText())
@@ -273,7 +276,7 @@ public class SettingPanel extends JPanel {
                         }else {
                             JOptionPane.showMessageDialog(panel,"歌单新建失败","提示",JOptionPane.ERROR_MESSAGE);
                          }
-                        songlistTnameText.setText("");
+                        songListNameText.setText("");
                         describeText.setText("");
                         iconText.setText("");
 

@@ -35,6 +35,7 @@ public class MainFrame {
 
         /*音乐库和设置*/
         jTabbedPane.addTab("音乐库",new JSongList(this,SongList.getLibrary(),user));
+
         jTabbedPane.addTab("设置",new SettingPanel(user,this.frame));
 
         /*单个用户拥有的歌单*/
