@@ -1,16 +1,16 @@
-package obj;
+package object;
 
-import api.Sqliter;
+import Interface.SongInterface;
 
 import java.nio.file.Path;
 
-public class Song {
+public class Song implements SongInterface {
     private String name;
     private int songID;
     private Path icon;
     private Path file;
     private String singer;
-    private String album; //专辑
+    private String album;
 
     public Song(String name, Path icon, Path file, String singer, String album) {
         this.name = name;
@@ -28,17 +28,9 @@ public class Song {
         this.singer = singer;
         this.album = album;
     }
-    public boolean addToSongList(SongList songList){
-        Sqliter sqliter = new Sqliter();
-        boolean mark = sqliter.createMark(this, songList);
-        sqliter.close();
-        return mark;
-
-    }
 
     public boolean save(){
 //        检查成员变量是否合法
-        //TODO 是否合法检测失败
         if (this.name.isEmpty() || !this.icon.toFile().isFile() || !this.file.toFile().isFile() || this.singer.isEmpty()|| this.album.isEmpty())
             return false;
         Sqliter sqliter = new Sqliter();

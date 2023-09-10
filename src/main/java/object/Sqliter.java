@@ -1,18 +1,19 @@
-package api;
+package object;
 
-import obj.Song;
-import obj.SongList;
-import obj.User;
+import Interface.SqliterInterface;
 
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Sqliter {
+public class Sqliter implements SqliterInterface {
     Connection c = null;
     Statement stmt = null;
 
-    //  构造函数，初始化数据库连接
+    /**
+     * 构造方法
+     * 连接数据库
+     */
     public Sqliter() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -25,6 +26,9 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 数据库断开连接
+     */
     public void close() {
         try {
             stmt.close();
@@ -35,8 +39,12 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 通过用户名获取所有用户
+     * @param usernames ArrayList &lt;String&qt; 用户名
+     * @return  ArrayList &lt;User&qt; 用户列表
+     */
     public ArrayList<User> getUser(ArrayList<String> usernames) {
-
         ArrayList<User> resUsers = new ArrayList<>();
         for (String username : usernames) {
             try {
@@ -55,6 +63,11 @@ public class Sqliter {
         return resUsers;
     }
 
+    /**
+     * 通过UUID获取用户
+     * @param UUID int 用户UUID
+     * @return User 用户
+     */
     public User getUserByUUID(int UUID){
         try{
             String sql = "SELECT * FROM user WHERE UUID=?";
@@ -70,9 +83,13 @@ public class Sqliter {
         return null;
     }
 
+    /**
+     * 通过歌单ID获取歌曲
+     * @param listID    int 歌单ID
+     * @return  ArrayList &lt;Song&qt; 歌曲列表
+     */
     public ArrayList<Song> getSongs(int listID) {
         try {
-//            先获取到所有的歌曲ID
             String sql = "SELECT * FROM mark WHERE listID=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1, listID);
@@ -80,7 +97,6 @@ public class Sqliter {
             ArrayList<Integer> songsID = new ArrayList<>();
             while (resultSet.next())
                 songsID.add(resultSet.getInt("songID"));
-//            再从song表中查询所有歌曲
             sql = "SELECT * FROM song WHERE songID=?";
             preparedStatement = c.prepareStatement(sql);
             ArrayList<Song> resSongs = new ArrayList<>();
@@ -104,7 +120,11 @@ public class Sqliter {
         return null;
     }
 
-    public ArrayList<Song> getSongs(boolean ALLSongs) {
+    /**
+     * 获取全部的歌曲
+     * @return 所有歌曲
+     */
+    public ArrayList<Song> getSongs() {
         try {
             String sql = "SELECT * FROM song";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
@@ -127,6 +147,11 @@ public class Sqliter {
         return null;
     }
 
+    /**
+     * 通过用户获取歌单
+     * @param user User 用户
+     * @return ArrayList &lt;SongList&qt; 歌单列表
+     */
     public ArrayList<SongList> getSongLists(User user) {
         int userUUID = user.getUUID();
         System.out.println(userUUID);
@@ -151,6 +176,11 @@ public class Sqliter {
         return null;
     }
 
+    /**
+     * 插入用户
+     * @param users ArrayList&lt;User&qt; 用户列表
+     * @return  是否成功
+     */
     public boolean saveUsers(ArrayList<User> users) {
         try {
             for (User user : users) {
@@ -169,6 +199,11 @@ public class Sqliter {
         return false;
     }
 
+    /**
+     * 更新用户
+     * @param users ArrayList &lt;User&qt; 用户列表
+     * @return  是否成功
+     */
     public boolean updateUsers(ArrayList<User> users) {
         try {
             for (User user : users) {
@@ -188,12 +223,20 @@ public class Sqliter {
         return false;
     }
 
-    public boolean createMark(Song song, SongList songList) {
+    /**
+     * 建立ID之间的联系
+     * @param song  Song 歌曲
+     * @param songList  SongList 歌单
+     * @param uuid  用户UUID
+     * @return  boolean 是否成功
+     */
+    public boolean createMark(Song song, SongList songList,int uuid) {
         try {
-            String sql = "INSERT INTO mark (songID,listID) VALUES (?,?)";
+            String sql = "INSERT INTO mark (songID,listID,userID) VALUES (?,?,?)";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
             preparedStatement.setInt(1, song.getSongID());
             preparedStatement.setInt(2, songList.getListID());
+            preparedStatement.setInt(3, uuid);
             int i = preparedStatement.executeUpdate();
             c.commit();
             return i > 0;
@@ -203,6 +246,11 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 创建歌单
+     * @param songList  SongList 歌单
+     * @return  boolean 是否成功
+     */
     public boolean createSongList(SongList songList) {
         try {
             String sql = "INSERT INTO songlist (name,des,userID,icon) VALUES (?,?,?,?)";
@@ -220,12 +268,16 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 从歌单中移除歌曲
+     * @param songList  SongList 歌单
+     * @param songID  int 歌曲ID
+     * @return boolean 是否成功
+     */
     public boolean removeSongInSongList(SongList songList, int songID) {
         try {
             String sql = "DELETE FROM mark WHERE songID=? AND listID=?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);
-//            preparedStatement.setInt(1, songList.getListID());
-//            preparedStatement.setInt(2, songID);
             preparedStatement.setInt(1, songID );
             preparedStatement.setInt(2, songList.getListID());
             int i = preparedStatement.executeUpdate();
@@ -237,6 +289,11 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 删除歌单
+     * @param songList SongList 歌单
+     * @return boolean 是否成功
+     */
     public boolean removeSongList(SongList songList) {
         removeMarkBySongList(songList.getListID());
         try {
@@ -252,6 +309,11 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 创建歌曲
+     * @param song Song 歌曲
+     * @return  boolean 是否成功
+     */
     public boolean createSong(Song song) {
         try {
             String sql = "INSERT INTO song (name,icon,file,singer,album) VALUES (?,?,?,?,?)";
@@ -270,6 +332,11 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 删除歌曲
+     * @param song Song 歌曲
+     * @return boolean 是否成功
+     */
     public boolean removeSong(Song song) {
         removeMarkBySong(song.getSongID());
         try {
@@ -285,6 +352,11 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 通过歌曲删除mark
+     * @param songID int 歌曲ID
+     * @return boolean 是否成功
+     */
     public boolean removeMarkBySong(int songID){
         try {
             String sql = "DELETE FROM mark WHERE songID=?";
@@ -299,6 +371,11 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 通过歌单ID删除mark
+     * @param SongListID int 歌单ID
+     * @return boolean 是否成功
+     */
     public boolean removeMarkBySongList(int SongListID){
         try{
             String sql = "DELETE FROM mark WHERE listID=?";
@@ -313,6 +390,11 @@ public class Sqliter {
         }
     }
 
+    /**
+     * 通过歌单ID获取歌曲
+     * @param listID int 歌单ID
+     * @return SongList 歌单
+     */
     public SongList getSongListByListID(int listID) {
         try {
             String sql = "SELECT * FROM songlist WHERE listID=?";

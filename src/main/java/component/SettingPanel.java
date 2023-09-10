@@ -1,8 +1,14 @@
 package component;
 
-import obj.Song;
-import obj.SongList;
-import obj.User;
+import Interface.SongInterface;
+import Interface.SongListInterface;
+import Interface.UserInterface;
+import object.Song;
+import object.SongList;
+import object.User;
+import proxy.SongListProxy;
+import proxy.SongProxy;
+import proxy.UserProxy;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,12 +34,17 @@ public class SettingPanel extends JPanel {
     private Box vbox = Box.createVerticalBox();
     private JPanel panel =new JPanel();
 
+    /**
+     * 构造方法
+     * @param user  User 用户信息
+     * @param frame JFrame 主窗口
+     */
     public SettingPanel(User user,JFrame frame){
+        UserInterface userProxy = UserProxy.createProxy(user);
         this.setLayout(new BorderLayout());
         title.setFont(new Font("仿宋", Font.BOLD, 30));
         title.setHorizontalAlignment(SwingConstants.CENTER);
-
-        reUsername.setText(user.getUsername());
+        reUsername.setText(userProxy.getUsername());
         reUsername.setEnabled(false);
         rePassword.setEnabled(false);
         box1.add(username);
@@ -41,20 +52,16 @@ public class SettingPanel extends JPanel {
         box1.add(reUsername);
         box1.add(Box.createHorizontalStrut(5));
         box1.add(reUsernameButton);
-
         box2.add(passwd);
         box2.add(Box.createHorizontalStrut(5));
         box2.add(rePassword);
         box2.add(Box.createHorizontalStrut(5));
         box2.add(rePasswordButton);
-
         box3.add(uploadSongs);
         box3.add(Box.createHorizontalStrut(5));
         box3.add(buildSongList);
         box3.add(Box.createHorizontalStrut(5));
         box3.add(exitButton);
-
-
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(box1);
         vbox.add(Box.createVerticalStrut(15));
@@ -65,21 +72,23 @@ public class SettingPanel extends JPanel {
         panel.add(title);
         panel.add(vbox);
         this.setLayout(new GridBagLayout());
-//        this.add(title,BorderLayout.NORTH);
         this.add(panel,new GridBagConstraints());
 
+        /*修改账号按钮事件*/
         reUsernameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!reUsername.isEnabled()){
                     reUsername.setEnabled(true);
                 }else {
-                    user.setUsername(reUsername.getText());
-                    user.save();
+                    userProxy.setUsername(reUsername.getText());
+                    userProxy.updata();
+                    reUsername.setEnabled(false);
                 }
             }
         });
 
+        /*修改密码按钮事件*/
         rePasswordButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,8 +98,8 @@ public class SettingPanel extends JPanel {
                     if (rePassword.getText().isEmpty()||rePassword.getText().isBlank()) {
                         JOptionPane.showMessageDialog(panel,"无效密码","提示",JOptionPane.WARNING_MESSAGE);
                     }else{
-                        user.setPassword(rePassword.getText());
-                        boolean save = user.save();
+                        userProxy.setPassword(rePassword.getText());
+                        boolean save = userProxy.save();
                         if (!save) {
                             JOptionPane.showMessageDialog(panel,"意外错误","提示",JOptionPane.WARNING_MESSAGE);
                             return;
@@ -103,6 +112,7 @@ public class SettingPanel extends JPanel {
             }
         });
 
+        /*上传歌曲按钮事件*/
         uploadSongs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -123,6 +133,8 @@ public class SettingPanel extends JPanel {
                 Box box5 = Box.createHorizontalBox();
                 JButton choose1 = new JButton("浏览");
                 JButton choose2 = new JButton("浏览");
+
+                /*浏览按钮1*/
                 choose1.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -133,6 +145,7 @@ public class SettingPanel extends JPanel {
                     }
                 });
 
+                /*浏览按钮2*/
                 choose2.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -162,7 +175,6 @@ public class SettingPanel extends JPanel {
                 box5.add(albumText);
                 Box vbox = Box.createVerticalBox();
                 JButton submit = new JButton("提交");
-
                 vbox.add(box1);
                 vbox.add(Box.createVerticalStrut(10));
                 vbox.add(box2);
@@ -174,6 +186,8 @@ public class SettingPanel extends JPanel {
                 vbox.add(box5);
                 vbox.add(Box.createVerticalStrut(10));
                 vbox.add(submit);
+
+                /*提交按钮*/
                 submit.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -181,7 +195,6 @@ public class SettingPanel extends JPanel {
                             JOptionPane.showMessageDialog(panel,"信息不得为空","提示",JOptionPane.ERROR_MESSAGE);
                             return;
                         }
-
                         Song song = new Song(
                             usernameText.getText(),
                             Paths.get(iconText.getText()),
@@ -189,8 +202,8 @@ public class SettingPanel extends JPanel {
                             singerText.getText(),
                             albumText.getText()
                         );
-                        boolean save = song.save();
-                        if(save){
+                        SongInterface songProxy = SongProxy.createProxy(song);
+                        if(songProxy.save()){
                             JOptionPane.showMessageDialog(panel,"歌曲添加成功","提示",JOptionPane.INFORMATION_MESSAGE);
                         }else {
                             JOptionPane.showMessageDialog(panel,"歌曲添加失败","提示",JOptionPane.ERROR_MESSAGE);
@@ -212,6 +225,7 @@ public class SettingPanel extends JPanel {
             }
         });
 
+        /*新建歌单按钮逻辑*/
         buildSongList.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -225,6 +239,7 @@ public class SettingPanel extends JPanel {
                 JTextField describeText = new JTextField();
                 JTextField iconText = new JTextField();
                 JButton choose = new JButton("浏览");
+                /*浏览按钮*/
                 choose.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -246,6 +261,7 @@ public class SettingPanel extends JPanel {
                 box3.add(Box.createHorizontalStrut(10));
                 box3.add(iconText);
                 box3.add(choose);
+                /*提交按钮*/
                 submit.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -263,15 +279,15 @@ public class SettingPanel extends JPanel {
                                 return;
                             }
                         }
-                        /*歌单新建x*/
+                        /*歌单新建*/
                         SongList songList = new SongList(
                                 songListNameText.getText(),
                                 describeText.getText(),
                                 user.getUUID(),
                                 Paths.get(iconText.getText())
                         );
-                        boolean save = songList.save();
-                         if(save){
+                        SongListInterface songListProxy = SongListProxy.createProxy(songList);
+                         if(songListProxy.save()){
                             JOptionPane.showMessageDialog(panel,"歌单新建成功","提示",JOptionPane.INFORMATION_MESSAGE);
                         }else {
                             JOptionPane.showMessageDialog(panel,"歌单新建失败","提示",JOptionPane.ERROR_MESSAGE);
@@ -279,7 +295,6 @@ public class SettingPanel extends JPanel {
                         songListNameText.setText("");
                         describeText.setText("");
                         iconText.setText("");
-
                     }
                 });
 
@@ -300,22 +315,14 @@ public class SettingPanel extends JPanel {
             }
         });
 
+        /*退出按钮事件*/
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
                 MainFrame mainFrame = new MainFrame();
-                mainFrame.run(user);
+                mainFrame.init(user);
             }
         });
     }
-
-//    public static void main(String[] args) {
-//        SettingPanel test = new SettingPanel(new User("test3","test3"));
-//        JFrame frame = new JFrame();
-//        frame.add(test);
-//        frame.pack();
-//        frame.setVisible(true);
-//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//    }
 }

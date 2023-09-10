@@ -1,43 +1,30 @@
 package component;
 
-import obj.User;
+import Interface.UserInterface;
+import object.User;
+import proxy.UserProxy;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicLookAndFeel;
-import javax.swing.plaf.multi.MultiLookAndFeel;
 import java.awt.*;
-import java.awt.event.*;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class LandingFrame {
     JFrame frame = new JFrame();
     JPanel loginPanel = new JPanel();
     JPanel signUpPanel = new JPanel();
-
-    /*************************************登入页面**************************************/
-
     /*登入页面元素*/
-    JLabel title = new JLabel("SwingPlayer");   //标题
-    Font font = new Font("仿宋", Font.PLAIN, 30);     //标题字体
+    JLabel title = new JLabel("SwingPlayer");
+    Font font = new Font("仿宋", Font.PLAIN, 30);
     JLabel username = new JLabel("账号");
     JLabel password = new JLabel("密码");
     JTextField usernameText = new JTextField(10);
     JPasswordField passwordText = new JPasswordField(10);
-
-    /*按钮*/
     JButton login = new JButton("登入");
     JButton singUp = new JButton("注册");
-
-    /*布局box*/
     Box usernameBox = Box.createHorizontalBox();
     Box passwordBox = Box.createHorizontalBox();
     Box buttonBox = Box.createHorizontalBox();
     Box sumaryLoginBox = Box.createVerticalBox();
-
-
-    /*************************************注册页面*********************************/
-
     /*注册页面元素*/
     JLabel SignUpTitle = new JLabel("注册");
     Font signFont = new Font("仿宋", Font.PLAIN, 20);
@@ -45,33 +32,32 @@ public class LandingFrame {
     JTextField signUserText = new JTextField(10);
     JLabel signPassword = new JLabel("密码");
     JPasswordField signPasswordText =new JPasswordField(10);
-    JLabel signRepassword = new JLabel("确认密码");
-    JPasswordField signRepasswordText =new JPasswordField(10);
-
-    JButton SignUpButton = new JButton("提交");
-
-    /*box组合*/
+    JLabel signRePassword = new JLabel("确认密码");
+    JPasswordField signRePasswordText =new JPasswordField(10);
+    JButton submit = new JButton("提交");
     Box signUsernameBox = Box.createHorizontalBox();
     Box signPasswordBox = Box.createHorizontalBox();
     Box signRepasswordBox = Box.createHorizontalBox();
     Box sumarySignUpBox = Box.createVerticalBox();
 
-
-    /*********************************初始化**********************************/
-
+    /**
+     * init()无参函数用于组装页面
+     * 使用setLookAndFeel方法实现风格转换
+     * 同时实现登录逻辑以及注册逻辑
+     */
     public void init() {
-//      页面布局定义
-        {
-        /*标题字体设置*/
+        /*样式设置*/
         title.setFont(font);
-//        定义样式
-        try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         loginPanel.setLayout(new BorderLayout());
         signUpPanel.setLayout(new BorderLayout());
+        //TODO 是否只设置了当前Jframe的样式
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
         /*登入页面组装*/
         usernameBox.add(username);
         usernameBox.add(usernameText);
@@ -96,41 +82,58 @@ public class LandingFrame {
         signPasswordBox.add(signPassword);
         signPasswordBox.add(signPasswordText);
         signPasswordBox.setPreferredSize(new Dimension(200,30));
-        signRepasswordBox.add(signRepassword);
-        signRepasswordBox.add(signRepasswordText);
+        signRepasswordBox.add(signRePassword);
+        signRepasswordBox.add(signRePasswordText);
         signRepasswordBox.setPreferredSize(new Dimension(200,30));
         signUpPanel.add(SignUpTitle, BorderLayout.NORTH);
         SignUpTitle.setHorizontalAlignment(SwingConstants.CENTER);
         sumarySignUpBox.add(signUsernameBox);
         sumarySignUpBox.add(signPasswordBox);
         sumarySignUpBox.add(signRepasswordBox);
-        sumarySignUpBox.add(SignUpButton);
+        sumarySignUpBox.add(submit);
         signUpPanel.add(sumarySignUpBox, BorderLayout.CENTER);
-
         signUpPanel.add(SignUpTitle,BorderLayout.NORTH);
         signUpPanel.add(sumarySignUpBox,BorderLayout.CENTER);
         frame.setLocationRelativeTo(null);
 
-        }
+        /*窗体设置*/
+        frame.getRootPane().setDefaultButton(login);
+        frame.add(loginPanel);
+        frame.pack();
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setIconImage(new ImageIcon("src\\main\\resources\\icon\\logo.png").getImage());
+        frame.setTitle("SwingPlayer");
+        frame.setVisible(true);
+    }
 
-//      登陆请求
+    /**
+     * 构造函数，用于加载按钮事件
+     * 登录按钮的事件监听：实现用户登录功能
+     * 注册按钮的事件监听：跳转到注册页面
+     * 提交按钮的事件监听：实现用户注册功能
+     * 注册时验证数据，注册成功后返回登录页面
+     */
+    public LandingFrame(){
+        /*登录按钮*/
         login.addActionListener(e -> {
-            /*数据校验*/
-            User user = new User(usernameText.getText(),passwordText.getText());
-            if (!user.isTrue()) {
+            User user = new User(usernameText.getText(),String.valueOf(passwordText.getPassword()));
+            UserInterface userProxy = UserProxy.createProxy(user);
+
+            if (!userProxy.login()) {
+                System.out.println("登录失败");
                 JOptionPane.showMessageDialog(frame,"账号或者密码错误");
                 usernameText.setText("");
                 passwordText.setText("");
                 return;
             }
-            System.out.println("登陆成功");
-            /*跳转到主页面*/
+            System.out.println("登录成功");
             frame.dispose();
             MainFrame mainFrame = new MainFrame();
-            mainFrame.run(user);
+            mainFrame.init(user);
         });
-        frame.getRootPane().setDefaultButton(login);
-//      跳转到注册页面
+
+        /*注册按钮*/
         singUp.addActionListener(e -> {
             frame.setResizable(false);
             frame.remove(loginPanel);
@@ -141,19 +144,23 @@ public class LandingFrame {
 
         });
 
-
-        SignUpButton.addActionListener(e -> {
-            /*存入数据库*/
-            if (signRepasswordText.getPassword().length == 0 || signUserText.getText().isBlank() || signUserText.getText().isEmpty()) {
+        /*注册提交按钮*/
+        submit.addActionListener(e -> {
+            /*格式判断*/
+            if (signRePasswordText.getPassword().length == 0 || signUserText.getText().isBlank() || signUserText.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(frame,"无效的用户或密码");
                 return;
             }
-            if (Arrays.equals(signRepasswordText.getPassword(),signPasswordText.getPassword())){
-                System.out.println(new User(signUserText.getText(), String.valueOf(signPasswordText.getPassword())).save());
+            /*两次密码判断*/
+            if (Arrays.equals(signRePasswordText.getPassword(),signPasswordText.getPassword())){
+                User user = new User(signUserText.getText(), String.valueOf(signPasswordText.getPassword()));
+                UserInterface userProxy = UserProxy.createProxy(user);
+                userProxy.save();
             }else{
                 JOptionPane.showMessageDialog(frame,"两次密码不一致");
                 return;
             }
+
             /*返回登入页面*/
             frame.remove(signUpPanel);
             frame.add(loginPanel);
@@ -161,15 +168,6 @@ public class LandingFrame {
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setVisible(true);
         });
-
-        /*窗体设置*/
-        frame.add(loginPanel);
-        frame.pack();
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setIconImage(new ImageIcon("src\\main\\resources\\icon\\logo.png").getImage());
-        frame.setTitle("SwingPlayer");
-        frame.setVisible(true);
     }
 
 }
