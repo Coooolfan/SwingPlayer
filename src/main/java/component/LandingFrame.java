@@ -19,7 +19,7 @@ public class LandingFrame {
     JLabel password = new JLabel("密码");
     JTextField usernameText = new JTextField(10);
     JPasswordField passwordText = new JPasswordField(10);
-    JButton login = new JButton("登入");
+    JButton login = new JButton("登录");
     JButton singUp = new JButton("注册");
     Box usernameBox = Box.createHorizontalBox();
     Box passwordBox = Box.createHorizontalBox();
@@ -50,7 +50,6 @@ public class LandingFrame {
         title.setFont(font);
         loginPanel.setLayout(new BorderLayout());
         signUpPanel.setLayout(new BorderLayout());
-        //TODO 是否只设置了当前Jframe的样式
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }

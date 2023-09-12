@@ -27,7 +27,7 @@ public class SettingPanel extends JPanel {
     private JButton rePasswordButton = new JButton("修改密码");
     private JButton uploadSongs = new JButton("上传歌曲");
     private JButton buildSongList = new JButton("新建歌单");
-    private JButton exitButton = new JButton("重启");
+    private JButton restartButton = new JButton("重启");
     private Box box1 = Box.createHorizontalBox();
     private Box box2 = Box.createHorizontalBox();
     private Box box3 = Box.createHorizontalBox();
@@ -61,7 +61,7 @@ public class SettingPanel extends JPanel {
         box3.add(Box.createHorizontalStrut(5));
         box3.add(buildSongList);
         box3.add(Box.createHorizontalStrut(5));
-        box3.add(exitButton);
+        box3.add(restartButton);
         vbox.add(Box.createVerticalStrut(10));
         vbox.add(box1);
         vbox.add(Box.createVerticalStrut(15));
@@ -315,8 +315,8 @@ public class SettingPanel extends JPanel {
             }
         });
 
-        /*退出按钮事件*/
-        exitButton.addActionListener(new ActionListener() {
+        /*重启按钮事件*/
+        restartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();

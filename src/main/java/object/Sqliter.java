@@ -154,7 +154,6 @@ public class Sqliter implements SqliterInterface {
      */
     public ArrayList<SongList> getSongLists(User user) {
         int userUUID = user.getUUID();
-        System.out.println(userUUID);
         try {
             String sql = "SELECT * FROM songlist WHERE userID = ?";
             PreparedStatement preparedStatement = c.prepareStatement(sql);

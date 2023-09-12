@@ -21,12 +21,17 @@ public class MainFrame {
      * @param user User 用户信息
      */
     public void init(User user){
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         creator = user;
         UserInterface userProxy = UserProxy.createProxy(user);
         ArrayList<SongList> songLists = userProxy.getSongLists();
 
         /*音乐库和设置*/
-        jTabbedPane.addTab("音乐库",new SongListPanel(this,SongList.getLibrary(),user));
+        jTabbedPane.addTab("资源库",new SongListPanel(this,SongList.getLibrary(),user));
         jTabbedPane.addTab("设置",new SettingPanel(user,this.frame));
 
         /*单个用户拥有的歌单*/
@@ -63,6 +68,13 @@ public class MainFrame {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 关闭窗体
+     */
+    public void close(){
+        frame.dispose();
     }
 
 }

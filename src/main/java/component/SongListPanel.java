@@ -58,7 +58,10 @@ public class SongListPanel extends JPanel {
             if(result){
                 if (songListProxy.remove()) {
                     JOptionPane.showMessageDialog(this, "删除成功,重启主页面后生效");
-                    //TODO 自动刷新页面
+                    //TODO 刷新页面
+                    rootFrame.close();
+                    new MainFrame().init(user);
+
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "删除失败", "提示", JOptionPane.ERROR_MESSAGE);

@@ -6,6 +6,7 @@ import object.User;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.logging.Logger;
 
 public class UserProxy {
     /**
@@ -22,12 +23,13 @@ public class UserProxy {
                 new InvocationHandler() {
                     @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        Logger logger = Logger.getLogger(this.getClass().getName());
                         if ("login".equals(method.getName())){
-                            System.out.println("用户执行登录操作");
+                            logger.info("用户执行登录操作");
                         }else if ("getSongLists".equals(method.getName())){
-                            System.out.println("获取用户所有歌单");
-                        } else if ("save".equals(method.getName())) {
-                            System.out.println("执行保存用户信息操作");
+                            logger.info("获取用户所有歌单");
+                        }else if ("save".equals(method.getName())) {
+                            logger.info("执行保存用户信息操作");
                         }
                         return method.invoke(user,args);
                     }
