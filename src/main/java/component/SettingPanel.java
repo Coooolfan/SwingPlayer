@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class SettingPanel extends JPanel {
     private JLabel title = new JLabel("设置");
@@ -20,13 +21,14 @@ public class SettingPanel extends JPanel {
     private JButton rePasswordButton = new JButton("修改密码");
     private JButton uploadSongs = new JButton("上传歌曲");
     private JButton buildSongList = new JButton("新建歌单");
+    private JButton exitButton = new JButton("重启");
     private Box box1 = Box.createHorizontalBox();
     private Box box2 = Box.createHorizontalBox();
     private Box box3 = Box.createHorizontalBox();
     private Box vbox = Box.createVerticalBox();
     private JPanel panel =new JPanel();
 
-    public SettingPanel(User user){
+    public SettingPanel(User user,JFrame frame){
         this.setLayout(new BorderLayout());
         title.setFont(new Font("仿宋", Font.BOLD, 30));
         title.setHorizontalAlignment(SwingConstants.CENTER);
@@ -47,8 +49,11 @@ public class SettingPanel extends JPanel {
         box2.add(rePasswordButton);
 
         box3.add(uploadSongs);
-        box3.add(Box.createHorizontalStrut(8));
+        box3.add(Box.createHorizontalStrut(5));
         box3.add(buildSongList);
+        box3.add(Box.createHorizontalStrut(5));
+        box3.add(exitButton);
+
 
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(box1);
@@ -169,6 +174,11 @@ public class SettingPanel extends JPanel {
                 submit.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (usernameText.getText().isEmpty()||iconText.getText().isEmpty()||pathText.getText().isEmpty()||singerText.getText().isEmpty()||albumText.getText().isEmpty()){
+                            JOptionPane.showMessageDialog(panel,"信息不得为空","提示",JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
                         Song song = new Song(
                             usernameText.getText(),
                             Paths.get(iconText.getText()),
@@ -182,7 +192,11 @@ public class SettingPanel extends JPanel {
                         }else {
                             JOptionPane.showMessageDialog(panel,"歌曲添加失败","提示",JOptionPane.ERROR_MESSAGE);
                         }
-                        /*上传歌曲*/
+                        usernameText.setText("");
+                        iconText.setText("");
+                        pathText.setText("");
+                        singerText.setText("");
+                        albumText.setText("");
                     }
                 });
                 panel.add(vbox);
@@ -232,6 +246,20 @@ public class SettingPanel extends JPanel {
                 submit.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if (songlistTnameText.getText().isEmpty()||describeText.getText().isEmpty()||iconText.getText().isEmpty()){
+                            JOptionPane.showMessageDialog(panel,"信息不得为空","提示",JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        ArrayList<SongList> existSongList = user.getSongLists();
+                        for (int i = 0; i < existSongList.size(); i++) {
+                            if (existSongList.get(i).getName().equals(songlistTnameText.getText())){
+                                JOptionPane.showMessageDialog(panel,"歌单名不得重复","提示",JOptionPane.ERROR_MESSAGE);
+                                songlistTnameText.setText("");
+                                describeText.setText("");
+                                iconText.setText("");
+                                return;
+                            }
+                        }
                         /*歌单新建x*/
                         SongList songList = new SongList(
                                 songlistTnameText.getText(),
@@ -245,6 +273,10 @@ public class SettingPanel extends JPanel {
                         }else {
                             JOptionPane.showMessageDialog(panel,"歌单新建失败","提示",JOptionPane.ERROR_MESSAGE);
                          }
+                        songlistTnameText.setText("");
+                        describeText.setText("");
+                        iconText.setText("");
+
                     }
                 });
 
@@ -264,14 +296,23 @@ public class SettingPanel extends JPanel {
                 dialog.setVisible(true);
             }
         });
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.run(user);
+            }
+        });
     }
 
-    public static void main(String[] args) {
-        SettingPanel test = new SettingPanel(new User("test3","test3"));
-        JFrame frame = new JFrame();
-        frame.add(test);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    }
+//    public static void main(String[] args) {
+//        SettingPanel test = new SettingPanel(new User("test3","test3"));
+//        JFrame frame = new JFrame();
+//        frame.add(test);
+//        frame.pack();
+//        frame.setVisible(true);
+//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//    }
 }

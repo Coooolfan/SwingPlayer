@@ -66,7 +66,7 @@ public class SongList {
     public boolean save(){
         Sqliter sqliter = new Sqliter();
 //        检查成员变量是否合法
-        if (this.name == null || this.des == null || this.icon == null || this.isLibrary)
+        if (this.name.isEmpty() || this.des.isEmpty() || this.icon.toFile().isFile()|| this.isLibrary)
             return false;
         boolean songList = sqliter.createSongList(this);
         sqliter.close();

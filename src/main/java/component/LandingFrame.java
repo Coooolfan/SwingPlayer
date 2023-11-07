@@ -132,7 +132,7 @@ public class LandingFrame {
         frame.getRootPane().setDefaultButton(login);
 //      跳转到注册页面
         singUp.addActionListener(e -> {
-
+            frame.setResizable(false);
             frame.remove(loginPanel);
             frame.add(signUpPanel);
             frame.pack();
