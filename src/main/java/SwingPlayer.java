@@ -1,5 +1,8 @@
 import component.LandingFrame;
 
+/**
+ * @author Coooolfan and zhifengmuxue
+ */
 public class SwingPlayer {
     public static void main(String[] args) {
         System.setProperty("awt.useSystemAAFontSettings","on");
